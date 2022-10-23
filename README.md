@@ -1,2 +1,2 @@
 # check
- Big Retard Player. When retard plays dota das a big problem.
+ Big trash Player. When trash plays dota das a big problem.
