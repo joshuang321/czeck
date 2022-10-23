@@ -1,5 +1,5 @@
-## check
-Big Retard Player. When retard plays dota das a big problem.
+# check
+Big trash Player. When trash plays dota das a big problem.
 
 # Functionalities
 - Add items to list with dates
