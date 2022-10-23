@@ -66,6 +66,10 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 	RECT rcAdjustRect = { 0 };
 	MSG Msg = { 0 };
 
+	WCHAR pszModuleFilename[MAX_PATH];
+	DWORD dwChDir = 0;
+	std::wstring_view wstrView;
+
 	icex.dwSize = (DWORD)sizeof(INITCOMMONCONTROLSEX);
 	icex.dwICC = ICC_BAR_CLASSES | ICC_DATE_CLASSES;
 
@@ -81,6 +85,18 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 	wcex.hIconSm = LoadIconW(hInstance, (LPCWSTR)MAKEINTRESOURCEW(IDI_APP));
 
 	pszClassName = RegisterClassExW(&wcex);
+
+	dwChDir = GetModuleFileNameW((HMODULE)hInstance, pszModuleFilename,
+		MAX_PATH);
+
+	if (dwChDir > 0) {
+
+		wstrView = std::wstring_view(pszModuleFilename);
+		dwChDir = wstrView.find_last_of(L'\\');
+		pszModuleFilename[dwChDir+1] = '\0';
+		SetCurrentDirectoryW(pszModuleFilename);
+	}
+
 
 	if (pszClassName) {
 
@@ -366,9 +382,8 @@ LRESULT WINAPI MainWindowProc(HWND hWnd,
 
 									GetClientRect(hWnd, &rcClient);
 									si.fMask = SIF_RANGE;
-									si.nMax = (65 * pAppPersistData
-										->checkList.size()) - rcClient
-										.bottom;
+									si.nMax = (65 * (pAppPersistData->checkList.size() + 1))
+										- rcClient.bottom;
 
 									si.nMax = (si.nMax < 0) ? 0 : si.nMax;
 									SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
@@ -425,10 +440,10 @@ LRESULT WINAPI MainWindowProc(HWND hWnd,
 										SetWindowPlacement(hWnd,
 											&pAppPersistData->
 											wpPrev);
-										SetWindowPos(hWnd, NULL, 0, 0,
+										SetWindowPos(hWnd, HWND_TOP, 0, 0,
 											0, 0,
-											SWP_NOZORDER | SWP_NOMOVE
-											| SWP_NOSIZE | SWP_NOOWNERZORDER
+											 SWP_NOMOVE | SWP_NOSIZE
+											| SWP_NOOWNERZORDER
 											| SWP_FRAMECHANGED);
 
 										InvalidateRect(hWnd, NULL, FALSE);
@@ -502,6 +517,8 @@ LRESULT WINAPI MainWindowProc(HWND hWnd,
 				RECT rcClient = { 0 };
 			SCROLLINFO si = { 0 };
 
+			si.cbSize = sizeof(SCROLLINFO);
+
 			pAppPersistData = (PAPPPERSISTDATA)GetWindowLongPtrW(hWnd,
 				GWLP_USERDATA);
 
@@ -531,11 +548,24 @@ LRESULT WINAPI MainWindowProc(HWND hWnd,
 				}
 
 				GetClientRect(hWnd, &rcClient);
+
+				si.fMask = SIF_POS;
+				GetScrollInfo(hWnd, SB_VERT, &si);
+
 				si.fMask = SIF_RANGE;
-				si.nMax = (65 * pAppPersistData->checkList.size()) -
+				si.nMax = (65 * (pAppPersistData->checkList.size() + 1)) -
 					rcClient.bottom;
 
 				si.nMax = (si.nMax < 0) ? 0 : si.nMax;
+
+				if (si.nPos > si.nMax) {
+
+					ScrollWindow(hWnd, 0, si.nPos - si.nMax,
+						NULL,
+						NULL);
+	        		UpdateWindow(hWnd);
+				}
+
 				SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
 			}
 		}
