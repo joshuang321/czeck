@@ -41,9 +41,9 @@ typedef struct APPPERSISTDATA {
 	WINDOWPLACEMENT wpPrev;
 } APPPERSISTDATA, *PAPPPERSISTDATA;
 
-const WCHAR pszMainWindowName[] = L"Check",
-	pszCheckCtrlWindowName[] = L"Check_CheckCtrl",
-	pszCheckDatFilename[] = L"check.dat";
+const WCHAR pszMainWindowName[] = L"Czeck",
+	pszCheckCtrlWindowName[] = L"Czeck_CheckCtrl",
+	pszCheckDatFilename[] = L"czeck.dat";
 
 LRESULT WINAPI MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT WINAPI CheckChildWindowProc(HWND, UINT, WPARAM, LPARAM);

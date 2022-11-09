@@ -8,7 +8,7 @@
     </security>
   </trustInfo>
   <assemblyIdentity type="win32" 
-                    name="NP.ICT.check" 
+                    name="NP.ICT.czeck" 
                     version="1.0.0.0" 
                     processorArchitecture="x86" 
                     publicKeyToken="0000000000000000" />
